@@ -5,14 +5,53 @@ agent:
     type: e1-standard-2
     os_image: ubuntu1804
 blocks:
-  - name: mix test
+  - name: Analyze Code
     task:
       jobs:
-        - name: mix deps.get
+        - name: credo
+          commands:
+            - mix credo -a
+        - name: formatter
+          commands:
+            - mix format --check-formatted
+      env_vars:
+        - name: MIX_ENV
+          value: test
+      prologue:
+        commands:
+          - checkout
+          - cache restore
+    dependencies:
+      - Build
+  - name: Build
+    dependencies: []
+    task:
+      jobs:
+        - name: Build
           commands:
             - sem-version elixir 1.10.3
             - checkout
+            - mix local.hex --force
+            - mix local.rebar --force
+            - cache restore
             - mix deps.get
+            - mix compile
+            - cache store
+      env_vars:
+        - name: MIX_ENV
+          value: test
+  - name: Run Tests
+    dependencies:
+      - Analyze Code
+    task:
+      prologue:
+        commands:
+          - sem-version elixir 1.10.3
+          - checkout
+          - cache restore
+      jobs:
+        - name: ex_unit
+          commands:
             - mix test
       env_vars:
         - name: MIX_ENV

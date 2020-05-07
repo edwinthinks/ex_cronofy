@@ -2,7 +2,7 @@ defmodule ExCronofy do
   @moduledoc """
   Provides common base functions for the library client
   to function.
-  """ 
+  """
 
   @base_uri "https://app.cronofy.com/"
 
@@ -38,13 +38,14 @@ defmodule ExCronofy do
   end
 
   defp add_uri_query_parameters(uri, query_params) when query_params == %{}, do: uri
-  defp add_uri_query_parameters(uri, query_params) do
-    sanitized_query_params = query_params 
-                             |> Enum.filter(fn {_,v} -> v != nil end)
-                             |> URI.encode_query()
 
-    uri 
+  defp add_uri_query_parameters(uri, query_params) do
+    sanitized_query_params =
+      query_params
+      |> Enum.filter(fn {_, v} -> v != nil end)
+      |> URI.encode_query()
+
+    uri
     |> URI.merge(%URI{query: sanitized_query_params})
   end
-
 end

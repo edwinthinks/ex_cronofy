@@ -6,7 +6,7 @@ defmodule ExCronofy.AuthTest do
     test "returns authorization uri with correct query params" do
       required_query_params = %{
         response_type: "code",
-        redirect_uri: Faker.String.base64(),
+        redirect_uri: Faker.Internet.url(),
         client_id: Application.get_env(:ex_cronofy, :client_id),
         scope: Faker.String.base64()
       }

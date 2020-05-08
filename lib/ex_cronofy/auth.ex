@@ -33,7 +33,7 @@ defmodule ExCronofy.Auth do
     ExCronofy.fetch_uri("/oauth/authorize", query_params)
   end
 
-  @spec request_authorization_url(String.t(), String.t(), map) :: tuple
+  # @spec request_authorization_url(String.t(), String.t(), map) :: tuple
   def request_access_token(code, redirect_uri) do
     ExCronofy.fetch_uri("/oauth/token")
     |> HTTPoison.post(%{

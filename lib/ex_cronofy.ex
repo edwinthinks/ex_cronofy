@@ -49,19 +49,19 @@ defmodule ExCronofy do
     |> URI.merge(%URI{query: sanitized_query_params})
   end
 
-  def handle_response(response) do
+  def handle_response({:error, %{reason: reason}}), do: {:error, reason}
+
+  def handle_response({:ok, response}) do
     response
-    |> Poison.decode(%{keys: :atoms!})
+    |> Poison.decode()
     |> handle_parsed_response()
   end
 
-  defp handle_parsed_response({:error, _}), do: {:error, "failed to parse"}
-
-  defp handle_parsed_response({:ok, %{status_code: 200, body: body}}) do
+  defp handle_parsed_response({:ok, %{"status_code" => 200, "body" => body}}) do
     {:ok, body}
   end
 
-  defp handle_parsed_response({:ok, %{status_code: 400, body: body}}) do
-    {:error, body.error}
+  defp handle_parsed_response({:ok, %{"status_code" => 400, "body" => body}}) do
+    {:error, body}
   end
 end

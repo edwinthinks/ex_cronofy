@@ -55,15 +55,15 @@ defmodule ExCronofy.AuthTest do
       }
 
       success_response = %{
-        status_code: 200,
-        body: %{
-          data: Faker.String.base64()
+        "status_code" => 200,
+        "body" => %{
+          "data" => Faker.String.base64()
         }
       }
 
-      with_mock HTTPoison, post: fn ^uri, ^body -> Poison.encode!(success_response) end do
-        expected_body = success_response.body
-        assert {:ok, expected_body} == ExCronofy.Auth.request_access_token(code, redirect_uri)
+      with_mock HTTPoison, post: fn ^uri, ^body -> {:ok, Poison.encode!(success_response)} end do
+        assert {:ok, success_response["body"]} ==
+                 ExCronofy.Auth.request_access_token(code, redirect_uri)
       end
     end
 
@@ -82,14 +82,14 @@ defmodule ExCronofy.AuthTest do
       }
 
       failure_response = %{
-        status_code: 400,
-        body: %{
-          error: Faker.String.base64()
+        "status_code" => 400,
+        "body" => %{
+          "error" => Faker.String.base64()
         }
       }
 
-      with_mock HTTPoison, post: fn ^uri, ^body -> Poison.encode!(failure_response) end do
-        assert {:error, failure_response.body.error} ==
+      with_mock HTTPoison, post: fn ^uri, ^body -> {:ok, Poison.encode!(failure_response)} end do
+        assert {:error, failure_response["body"]} ==
                  ExCronofy.Auth.request_access_token(code, redirect_uri)
       end
     end

@@ -51,17 +51,11 @@ defmodule ExCronofy do
 
   def handle_response({:error, %{reason: reason}}), do: {:error, reason}
 
-  def handle_response({:ok, response}) do
-    response
-    |> Poison.decode()
-    |> handle_parsed_response()
-  end
-
-  defp handle_parsed_response({:ok, %{"status_code" => 200, "body" => body}}) do
-    {:ok, body}
-  end
-
-  defp handle_parsed_response({:ok, %{"status_code" => 400, "body" => body}}) do
-    {:error, body}
+  def handle_response({:ok, %{status_code: status_code, body: body}}) do
+    if status_code in Enum.to_list(200..299) do
+      {:ok, Poison.decode!(body)}
+    else
+      {:error, Poison.decode!(body)}
+    end
   end
 end

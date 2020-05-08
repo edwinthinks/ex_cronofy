@@ -46,23 +46,30 @@ defmodule ExCronofy.AuthTest do
 
       uri = ExCronofy.fetch_uri("/oauth/token")
 
-      body = %{
-        client_id: Application.get_env(:ex_cronofy, :client_id),
-        client_secret: Application.get_env(:ex_cronofy, :client_secret),
-        grant_type: "authorization_code",
-        code: code,
-        redirect_uri: redirect_uri
-      }
+      body =
+        Poison.encode!(%{
+          client_id: Application.get_env(:ex_cronofy, :client_id),
+          client_secret: Application.get_env(:ex_cronofy, :client_secret),
+          grant_type: "authorization_code",
+          code: code,
+          redirect_uri: redirect_uri
+        })
 
       success_response = %{
-        "status_code" => 200,
-        "body" => %{
-          "data" => Faker.String.base64()
-        }
+        status_code: 200,
+        body:
+          Poison.encode!(%{
+            data: Faker.String.base64()
+          })
       }
 
-      with_mock HTTPoison, post: fn ^uri, ^body -> {:ok, Poison.encode!(success_response)} end do
-        assert {:ok, success_response["body"]} ==
+      with_mock HTTPoison,
+        post: fn ^uri, ^body, [{"Content-Type", "application/json"}] ->
+          {:ok, success_response}
+        end do
+        decoded_body = Poison.decode!(success_response.body)
+
+        assert {:ok, decoded_body} ==
                  ExCronofy.Auth.request_access_token(code, redirect_uri)
       end
     end
@@ -73,23 +80,30 @@ defmodule ExCronofy.AuthTest do
 
       uri = ExCronofy.fetch_uri("/oauth/token")
 
-      body = %{
-        client_id: Application.get_env(:ex_cronofy, :client_id),
-        client_secret: Application.get_env(:ex_cronofy, :client_secret),
-        grant_type: "authorization_code",
-        code: code,
-        redirect_uri: redirect_uri
-      }
+      body =
+        Poison.encode!(%{
+          client_id: Application.get_env(:ex_cronofy, :client_id),
+          client_secret: Application.get_env(:ex_cronofy, :client_secret),
+          grant_type: "authorization_code",
+          code: code,
+          redirect_uri: redirect_uri
+        })
+
+      error_msg = Faker.String.base64()
 
       failure_response = %{
-        "status_code" => 400,
-        "body" => %{
-          "error" => Faker.String.base64()
-        }
+        status_code: 400,
+        body:
+          Poison.encode!(%{
+            error: error_msg
+          })
       }
 
-      with_mock HTTPoison, post: fn ^uri, ^body -> {:ok, Poison.encode!(failure_response)} end do
-        assert {:error, failure_response["body"]} ==
+      with_mock HTTPoison,
+        post: fn ^uri, ^body, [{"Content-Type", "application/json"}] ->
+          {:ok, failure_response}
+        end do
+        assert {:error, %{"error" => error_msg}} ==
                  ExCronofy.Auth.request_access_token(code, redirect_uri)
       end
     end

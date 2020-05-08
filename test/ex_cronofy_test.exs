@@ -28,4 +28,32 @@ defmodule ExCronofyTest do
       assert resultant_uri == "https://app.cronofy.com#{path}"
     end
   end
+
+  describe "handle_response/1" do
+    test "handles success and returns ok with body" do
+      response = %{
+        status_code: 200,
+        body: %{
+          data: Faker.String.base64()
+        }
+      }
+
+      assert {:ok, response.body} == ExCronofy.handle_response(Poison.encode!(response))
+    end
+
+    test "handles bad parse and returns error with message" do
+      assert {:error, "failed to parse"} == ExCronofy.handle_response("not_a_json")
+    end
+
+    test "handles 400 error with error and error message" do
+      response = %{
+        status_code: 400,
+        body: %{
+          error: Faker.String.base64()
+        }
+      }
+
+      assert {:error, response.body.error} == ExCronofy.handle_response(Poison.encode!(response))
+    end
+  end
 end

@@ -107,4 +107,67 @@ defmodule ExCronofy.AuthTest do
       end
     end
   end
+
+  describe "refresh_access_token/1" do
+    test "returns ok and body on 200 success" do
+      refresh_token = Faker.String.base64()
+      uri = ExCronofy.fetch_api_uri("/oauth/token")
+
+      body =
+        Poison.encode!(%{
+          client_id: Application.get_env(:ex_cronofy, :client_id),
+          client_secret: Application.get_env(:ex_cronofy, :client_secret),
+          grant_type: "refresh_token",
+          refresh_token: refresh_token
+        })
+
+      success_response = %{
+        status_code: 200,
+        body:
+          Poison.encode!(%{
+            data: Faker.String.base64()
+          })
+      }
+
+      with_mock HTTPoison,
+        post: fn ^uri, ^body, [{"Content-Type", "application/json"}] ->
+          {:ok, success_response}
+        end do
+        decoded_body = Poison.decode!(success_response.body)
+
+        assert {:ok, decoded_body} == ExCronofy.Auth.refresh_access_token(refresh_token)
+      end
+    end
+
+    test "returns error and message on 400 error" do
+      refresh_token = Faker.String.base64()
+      uri = ExCronofy.fetch_api_uri("/oauth/token")
+
+      body =
+        Poison.encode!(%{
+          client_id: Application.get_env(:ex_cronofy, :client_id),
+          client_secret: Application.get_env(:ex_cronofy, :client_secret),
+          grant_type: "refresh_token",
+          refresh_token: refresh_token
+        })
+
+      error_msg = Faker.String.base64()
+
+      failure_response = %{
+        status_code: 400,
+        body:
+          Poison.encode!(%{
+            error: error_msg
+          })
+      }
+
+      with_mock HTTPoison,
+        post: fn ^uri, ^body, [{"Content-Type", "application/json"}] ->
+          {:ok, failure_response}
+        end do
+        assert {:error, %{"error" => error_msg}} ==
+                 ExCronofy.Auth.refresh_access_token(refresh_token)
+      end
+    end
+  end
 end

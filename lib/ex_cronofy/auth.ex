@@ -52,4 +52,19 @@ defmodule ExCronofy.Auth do
     )
     |> ExCronofy.handle_api_response()
   end
+
+  @spec refresh_access_token(String.t()) :: tuple
+  def refresh_access_token(refresh_token) do
+    ExCronofy.fetch_api_uri("/oauth/token")
+    |> HTTPoison.post(
+      Poison.encode!(%{
+        client_id: @client_id,
+        client_secret: @client_secret,
+        grant_type: "refresh_token",
+        refresh_token: refresh_token
+      }),
+      [{"Content-Type", "application/json"}]
+    )
+    |> ExCronofy.handle_api_response()
+  end
 end

@@ -4,6 +4,10 @@ defmodule ExCronofy.Auth do
   cronofy services
   """
 
+  @redirect_uri Application.get_env(:ex_cronofy, :redirect_uri)
+  @client_id Application.get_env(:ex_cronofy, :client_id)
+  @client_secret Application.get_env(:ex_cronofy, :client_secret)
+
   @doc """
   Returns a generated request authorization url
 
@@ -15,18 +19,18 @@ defmodule ExCronofy.Auth do
 
   ## Examples
 
-      iex> ExCronofy.Auth.request_authorization_url("/test", "/redirect-test", %{a: "test"})
-      "https://app.cronofy.com/oauth/authorize?a=test&client_id=fake_client_id&redirect_uri=%2Fredirect-test&response_type=code&scope=%2Ftest"
+      iex> ExCronofy.Auth.request_authorization_url("/test", %{a: "test"})
+      "https://app.cronofy.com/oauth/authorize?a=test&client_id=fake_client_id&redirect_uri=fake_redirect_uri&response_type=code&scope=%2Ftest"
 
   """
-  @spec request_authorization_url(String.t(), String.t(), map) :: String.t()
-  def request_authorization_url(scope, redirect_uri, options \\ %{}) do
+  @spec request_authorization_url(String.t(), map) :: String.t()
+  def request_authorization_url(scope, options \\ %{}) do
     query_params =
       %{
         response_type: "code",
-        redirect_uri: redirect_uri,
+        redirect_uri: @redirect_uri,
         scope: scope,
-        client_id: Application.get_env(:ex_cronofy, :client_id)
+        client_id: @client_id
       }
       |> Map.merge(options)
 
@@ -38,8 +42,8 @@ defmodule ExCronofy.Auth do
     ExCronofy.fetch_uri("/oauth/token")
     |> HTTPoison.post(
       Poison.encode!(%{
-        client_id: Application.get_env(:ex_cronofy, :client_id),
-        client_secret: Application.get_env(:ex_cronofy, :client_secret),
+        client_id: @client_id,
+        client_secret: @client_secret,
         grant_type: "authorization_code",
         code: code,
         redirect_uri: redirect_uri

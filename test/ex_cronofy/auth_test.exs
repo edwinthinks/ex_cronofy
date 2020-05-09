@@ -4,11 +4,11 @@ defmodule ExCronofy.AuthTest do
 
   import Mock
 
-  describe "request_authorization_url/3" do
+  describe "request_authorization_url/2" do
     test "returns authorization uri with correct query params" do
       required_query_params = %{
         response_type: "code",
-        redirect_uri: Faker.Internet.url(),
+        redirect_uri: Application.get_env(:ex_cronofy, :redirect_uri),
         client_id: Application.get_env(:ex_cronofy, :client_id),
         scope: Faker.String.base64()
       }
@@ -20,7 +20,6 @@ defmodule ExCronofy.AuthTest do
       resultant_uri =
         ExCronofy.Auth.request_authorization_url(
           required_query_params.scope,
-          required_query_params.redirect_uri,
           optional_params
         )
 

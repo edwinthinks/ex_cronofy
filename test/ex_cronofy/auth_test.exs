@@ -1,6 +1,5 @@
 defmodule ExCronofy.AuthTest do
   use ExUnit.Case
-  doctest ExCronofy.Auth
 
   import Mock
 
@@ -39,134 +38,84 @@ defmodule ExCronofy.AuthTest do
   end
 
   describe "request_access_token/2" do
-    test "returns ok and body on 200 success" do
+    test "sends API request to properly and returns ok with response" do
       code = Faker.String.base64()
       redirect_uri = Faker.Internet.url()
 
-      uri = ExCronofy.fetch_api_uri("/oauth/token")
+      path = "/oauth/token"
 
-      body =
-        Poison.encode!(%{
-          client_id: Application.get_env(:ex_cronofy, :client_id),
-          client_secret: Application.get_env(:ex_cronofy, :client_secret),
-          grant_type: "authorization_code",
-          code: code,
-          redirect_uri: redirect_uri
-        })
-
-      success_response = %{
-        status_code: 200,
-        body:
-          Poison.encode!(%{
-            data: Faker.String.base64()
-          })
+      request_body = %{
+        client_id: Application.get_env(:ex_cronofy, :client_id),
+        client_secret: Application.get_env(:ex_cronofy, :client_secret),
+        grant_type: "authorization_code",
+        code: code,
+        redirect_uri: redirect_uri
       }
 
-      with_mock HTTPoison,
-        post: fn ^uri, ^body, [{"Content-Type", "application/json"}] ->
-          {:ok, success_response}
-        end do
-        decoded_body = Poison.decode!(success_response.body)
+      fake_response = Faker.String.base64()
 
-        assert {:ok, decoded_body} ==
-                 ExCronofy.Auth.request_access_token(code, redirect_uri)
-      end
-    end
-
-    test "returns error and message on 400 error" do
-      code = Faker.String.base64()
-      redirect_uri = Faker.Internet.url()
-
-      uri = ExCronofy.fetch_api_uri("/oauth/token")
-
-      body =
-        Poison.encode!(%{
-          client_id: Application.get_env(:ex_cronofy, :client_id),
-          client_secret: Application.get_env(:ex_cronofy, :client_secret),
-          grant_type: "authorization_code",
-          code: code,
-          redirect_uri: redirect_uri
-        })
-
-      error_msg = Faker.String.base64()
-
-      failure_response = %{
-        status_code: 400,
-        body:
-          Poison.encode!(%{
-            error: error_msg
-          })
-      }
-
-      with_mock HTTPoison,
-        post: fn ^uri, ^body, [{"Content-Type", "application/json"}] ->
-          {:ok, failure_response}
-        end do
-        assert {:error, %{"error" => error_msg}} ==
-                 ExCronofy.Auth.request_access_token(code, redirect_uri)
+      with_mock ExCronofy.ApiClient, post: fn ^path, ^request_body -> {:ok, fake_response} end do
+        assert {:ok, fake_response} == ExCronofy.Auth.request_access_token(code, redirect_uri)
       end
     end
   end
 
   describe "refresh_access_token/1" do
-    test "returns ok and body on 200 success" do
+    test "sends API request to properly and returns ok with response" do
       refresh_token = Faker.String.base64()
-      uri = ExCronofy.fetch_api_uri("/oauth/token")
 
-      body =
-        Poison.encode!(%{
-          client_id: Application.get_env(:ex_cronofy, :client_id),
-          client_secret: Application.get_env(:ex_cronofy, :client_secret),
-          grant_type: "refresh_token",
-          refresh_token: refresh_token
-        })
+      path = "/oauth/token"
 
-      success_response = %{
-        status_code: 200,
-        body:
-          Poison.encode!(%{
-            data: Faker.String.base64()
-          })
+      request_body = %{
+        client_id: Application.get_env(:ex_cronofy, :client_id),
+        client_secret: Application.get_env(:ex_cronofy, :client_secret),
+        grant_type: "refresh_token",
+        refresh_token: refresh_token
       }
 
-      with_mock HTTPoison,
-        post: fn ^uri, ^body, [{"Content-Type", "application/json"}] ->
-          {:ok, success_response}
-        end do
-        decoded_body = Poison.decode!(success_response.body)
+      fake_response = Faker.String.base64()
 
-        assert {:ok, decoded_body} == ExCronofy.Auth.refresh_access_token(refresh_token)
+      with_mock ExCronofy.ApiClient, post: fn ^path, ^request_body -> {:ok, fake_response} end do
+        assert {:ok, fake_response} == ExCronofy.Auth.refresh_access_token(refresh_token)
       end
     end
+  end
 
-    test "returns error and message on 400 error" do
-      refresh_token = Faker.String.base64()
-      uri = ExCronofy.fetch_api_uri("/oauth/token")
+  describe "revoke_authorization/1" do
+    test "sends API request to properly and returns ok with response" do
+      token = Faker.String.base64()
 
-      body =
-        Poison.encode!(%{
-          client_id: Application.get_env(:ex_cronofy, :client_id),
-          client_secret: Application.get_env(:ex_cronofy, :client_secret),
-          grant_type: "refresh_token",
-          refresh_token: refresh_token
-        })
+      path = "/oauth/token/revoke"
 
-      error_msg = Faker.String.base64()
-
-      failure_response = %{
-        status_code: 400,
-        body:
-          Poison.encode!(%{
-            error: error_msg
-          })
+      request_body = %{
+        client_id: Application.get_env(:ex_cronofy, :client_id),
+        client_secret: Application.get_env(:ex_cronofy, :client_secret),
+        token: token
       }
 
-      with_mock HTTPoison,
-        post: fn ^uri, ^body, [{"Content-Type", "application/json"}] ->
-          {:ok, failure_response}
-        end do
-        assert {:error, %{"error" => error_msg}} ==
-                 ExCronofy.Auth.refresh_access_token(refresh_token)
+      fake_response = Faker.String.base64()
+
+      with_mock ExCronofy.ApiClient, post: fn ^path, ^request_body -> {:ok, fake_response} end do
+        assert {:ok, fake_response} == ExCronofy.Auth.revoke_authorization(token)
+      end
+    end
+  end
+
+  describe "revoke_profile/2" do
+    test "sends API request to properly and returns ok with response" do
+      profile_id = Faker.String.base64()
+      access_token = Faker.String.base64()
+
+      path = "/v1/profiles/#{profile_id}/revoke"
+      request_body = %{}
+
+      fake_response = Faker.String.base64()
+
+      headers = [{"Authorization", "Bearer #{access_token}"}]
+
+      with_mock ExCronofy.ApiClient,
+        post: fn ^path, ^request_body, ^headers -> {:ok, fake_response} end do
+        assert {:ok, fake_response} == ExCronofy.Auth.revoke_profile(profile_id, access_token)
       end
     end
   end

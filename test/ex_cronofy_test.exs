@@ -29,10 +29,10 @@ defmodule ExCronofyTest do
     end
   end
 
-  describe "handle_response/1" do
+  describe "handle_api_response/1" do
     test "handles error and return :error with reason" do
       reason = Faker.String.base64()
-      assert {:error, reason} == ExCronofy.handle_response({:error, %{reason: reason}})
+      assert {:error, reason} == ExCronofy.handle_api_response({:error, %{reason: reason}})
     end
 
     test "handles 200 success and return :ok with body" do
@@ -43,7 +43,7 @@ defmodule ExCronofyTest do
         body: Poison.encode!(body)
       }
 
-      assert {:ok, body} == ExCronofy.handle_response({:ok, response})
+      assert {:ok, body} == ExCronofy.handle_api_response({:ok, response})
     end
 
     test "handles non 200 and returns :error with body" do
@@ -54,7 +54,7 @@ defmodule ExCronofyTest do
         body: Poison.encode!(body)
       }
 
-      assert {:error, body} == ExCronofy.handle_response({:ok, response})
+      assert {:error, body} == ExCronofy.handle_api_response({:ok, response})
     end
   end
 end

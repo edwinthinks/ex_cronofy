@@ -5,6 +5,7 @@ defmodule ExCronofy do
   """
 
   @base_uri "https://app.cronofy.com/"
+  @default_headers [{"Content-Type", "application/json"}]
 
   @doc """
   Generates and returns a cronofy URI
@@ -54,22 +55,22 @@ defmodule ExCronofy do
 
   ## Examples
 
-      iex> ExCronofy.handle_response({:error, %{reason: "test"}})
+      iex> ExCronofy.handle_api_response({:error, %{reason: "test"}})
       {:error, "test"}
 
       iex> data = Poison.encode!(%{data: "ok"})
-      iex> ExCronofy.handle_response({:ok, %{status_code: 200, body: data}})
+      iex> ExCronofy.handle_api_response({:ok, %{status_code: 200, body: data}})
       {:ok, %{"data" => "ok"}}
 
       iex> data = Poison.encode!(%{message: "ok"})
-      iex> ExCronofy.handle_response({:ok, %{status_code: 400, body: data}})
+      iex> ExCronofy.handle_api_response({:ok, %{status_code: 400, body: data}})
       {:error, %{"message" => "ok"}}
 
 
   """
-  def handle_response({:error, %{reason: reason}}), do: {:error, reason}
+  def handle_api_response({:error, %{reason: reason}}), do: {:error, reason}
 
-  def handle_response({:ok, %{status_code: status_code, body: body}}) do
+  def handle_api_response({:ok, %{status_code: status_code, body: body}}) do
     if success_code?(status_code) do
       {:ok, Poison.decode!(body)}
     else

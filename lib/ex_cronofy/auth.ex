@@ -50,6 +50,6 @@ defmodule ExCronofy.Auth do
       }),
       [{"Content-Type", "application/json"}]
     )
-    |> ExCronofy.handle_response()
+    |> ExCronofy.handle_api_response()
   end
 end

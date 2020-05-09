@@ -48,4 +48,14 @@ defmodule ExCronofy do
     uri
     |> URI.merge(%URI{query: sanitized_query_params})
   end
+
+  def handle_response({:error, %{reason: reason}}), do: {:error, reason}
+
+  def handle_response({:ok, %{status_code: status_code, body: body}}) do
+    if status_code in Enum.to_list(200..299) do
+      {:ok, Poison.decode!(body)}
+    else
+      {:error, Poison.decode!(body)}
+    end
+  end
 end

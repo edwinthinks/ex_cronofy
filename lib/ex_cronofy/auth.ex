@@ -32,4 +32,20 @@ defmodule ExCronofy.Auth do
 
     ExCronofy.fetch_uri("/oauth/authorize", query_params)
   end
+
+  @spec request_access_token(String.t(), String.t()) :: tuple
+  def request_access_token(code, redirect_uri) do
+    ExCronofy.fetch_uri("/oauth/token")
+    |> HTTPoison.post(
+      Poison.encode!(%{
+        client_id: Application.get_env(:ex_cronofy, :client_id),
+        client_secret: Application.get_env(:ex_cronofy, :client_secret),
+        grant_type: "authorization_code",
+        code: code,
+        redirect_uri: redirect_uri
+      }),
+      [{"Content-Type", "application/json"}]
+    )
+    |> ExCronofy.handle_response()
+  end
 end

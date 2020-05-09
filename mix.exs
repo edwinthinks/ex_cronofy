@@ -21,9 +21,12 @@ defmodule ExCronofy.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:httpoison, "~> 1.6"},
+      {:poison, "~> 3.1"},
       {:ex_doc, "~> 0.21", only: :dev, runtime: false},
       {:credo, "~> 1.4", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
+      {:mock, "~> 0.3.0", only: :test},
       {:faker, "~> 0.13", only: :test}
     ]
   end

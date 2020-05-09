@@ -1,4 +1,8 @@
 defmodule ExCronofy.ApiClient do
+  @moduledoc """
+  An HTTPoison client wrapped to process API http requests to Cronofy
+  """
+
   use HTTPoison.Base
 
   def process_request_url(url) do

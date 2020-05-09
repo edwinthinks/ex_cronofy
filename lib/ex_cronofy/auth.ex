@@ -1,7 +1,7 @@
 defmodule ExCronofy.Auth do
   @moduledoc """
   Provides functions to handle authorization and authentication of
-  cronofy services
+  Cronofy services
   """
 
   @redirect_uri Application.get_env(:ex_cronofy, :redirect_uri)

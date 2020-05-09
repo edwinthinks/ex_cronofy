@@ -39,7 +39,7 @@ defmodule ExCronofy.Auth do
 
   @spec request_access_token(String.t(), String.t()) :: tuple
   def request_access_token(code, redirect_uri) do
-    ExCronofy.fetch_uri("/oauth/token")
+    ExCronofy.fetch_api_uri("/oauth/token")
     |> HTTPoison.post(
       Poison.encode!(%{
         client_id: @client_id,

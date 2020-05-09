@@ -43,7 +43,7 @@ defmodule ExCronofy.AuthTest do
       code = Faker.String.base64()
       redirect_uri = Faker.Internet.url()
 
-      uri = ExCronofy.fetch_uri("/oauth/token")
+      uri = ExCronofy.fetch_api_uri("/oauth/token")
 
       body =
         Poison.encode!(%{
@@ -77,7 +77,7 @@ defmodule ExCronofy.AuthTest do
       code = Faker.String.base64()
       redirect_uri = Faker.Internet.url()
 
-      uri = ExCronofy.fetch_uri("/oauth/token")
+      uri = ExCronofy.fetch_api_uri("/oauth/token")
 
       body =
         Poison.encode!(%{

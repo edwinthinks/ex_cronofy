@@ -5,6 +5,7 @@ defmodule ExCronofy do
   """
 
   @base_uri "https://app.cronofy.com/"
+  @api_base_uri "https://api.cronofy.com/"
   @default_headers [{"Content-Type", "application/json"}]
 
   @doc """
@@ -29,8 +30,19 @@ defmodule ExCronofy do
     |> URI.to_string()
   end
 
+  @spec fetch_api_uri(String.t()) :: String.t()
+  def fetch_api_uri(path) do
+    api_base_uri()
+    |> add_uri_path(path)
+    |> URI.to_string()
+  end
+
   defp base_uri() do
     URI.parse(@base_uri)
+  end
+
+  defp api_base_uri() do
+    URI.parse(@api_base_uri)
   end
 
   defp add_uri_path(uri, path) do

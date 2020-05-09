@@ -29,6 +29,15 @@ defmodule ExCronofyTest do
     end
   end
 
+  describe "fetch_api_uri/2" do
+    test "generates api uri with path" do
+      path = "/test"
+
+      resultant_uri = ExCronofy.fetch_api_uri(path)
+      assert resultant_uri == "https://api.cronofy.com#{path}"
+    end
+  end
+
   describe "handle_api_response/1" do
     test "handles error and return :error with reason" do
       reason = Faker.String.base64()

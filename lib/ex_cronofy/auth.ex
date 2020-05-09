@@ -25,16 +25,22 @@ defmodule ExCronofy.Auth do
   """
   @spec request_authorization_url(String.t(), map) :: String.t()
   def request_authorization_url(scope, options \\ %{}) do
-    query_params =
-      %{
-        response_type: "code",
-        redirect_uri: @redirect_uri,
-        scope: scope,
-        client_id: @client_id
-      }
-      |> Map.merge(options)
+    query_params = %{
+      response_type: "code",
+      redirect_uri: @redirect_uri,
+      scope: scope,
+      client_id: @client_id
+    }
 
-    ExCronofy.fetch_uri("/oauth/authorize", query_params)
+    sanitized_query_params =
+      query_params
+      |> Map.merge(options)
+      |> Enum.filter(fn {_, v} -> v != nil end)
+      |> URI.encode_query()
+
+    URI.parse("https://app.cronofy.com/oauth/authorize")
+    |> URI.merge(%URI{query: sanitized_query_params})
+    |> URI.to_string()
   end
 
   @doc """
@@ -47,18 +53,13 @@ defmodule ExCronofy.Auth do
   """
   @spec request_access_token(String.t(), String.t()) :: tuple
   def request_access_token(code, redirect_uri) do
-    ExCronofy.fetch_api_uri("/oauth/token")
-    |> HTTPoison.post(
-      Poison.encode!(%{
-        client_id: @client_id,
-        client_secret: @client_secret,
-        grant_type: "authorization_code",
-        code: code,
-        redirect_uri: redirect_uri
-      }),
-      [{"Content-Type", "application/json"}]
-    )
-    |> ExCronofy.handle_api_response()
+    ExCronofy.ApiClient.post("/oauth/token", %{
+      client_id: @client_id,
+      client_secret: @client_secret,
+      grant_type: "authorization_code",
+      code: code,
+      redirect_uri: redirect_uri
+    })
   end
 
   @doc """
@@ -70,17 +71,12 @@ defmodule ExCronofy.Auth do
   """
   @spec refresh_access_token(String.t()) :: tuple
   def refresh_access_token(refresh_token) do
-    ExCronofy.fetch_api_uri("/oauth/token")
-    |> HTTPoison.post(
-      Poison.encode!(%{
-        client_id: @client_id,
-        client_secret: @client_secret,
-        grant_type: "refresh_token",
-        refresh_token: refresh_token
-      }),
-      [{"Content-Type", "application/json"}]
-    )
-    |> ExCronofy.handle_api_response()
+    ExCronofy.ApiClient.post("/oauth/token", %{
+      client_id: @client_id,
+      client_secret: @client_secret,
+      grant_type: "refresh_token",
+      refresh_token: refresh_token
+    })
   end
 
   @doc """
@@ -92,16 +88,11 @@ defmodule ExCronofy.Auth do
   """
   @spec revoke_authorization(String.t()) :: tuple
   def revoke_authorization(token) do
-    ExCronofy.fetch_api_uri("/oauth/token/revoke")
-    |> HTTPoison.post(
-      Poison.encode!(%{
-        client_id: @client_id,
-        client_secret: @client_secret,
-        token: token
-      }),
-      [{"Content-Type", "application/json"}]
-    )
-    |> ExCronofy.handle_api_response()
+    ExCronofy.ApiClient.post("/oauth/token/revoke", %{
+      client_id: @client_id,
+      client_secret: @client_secret,
+      token: token
+    })
   end
 
   @doc """
@@ -114,11 +105,10 @@ defmodule ExCronofy.Auth do
   """
   @spec revoke_profile(String.t(), String.t()) :: tuple
   def revoke_profile(profile_id, access_token) do
-    ExCronofy.fetch_api_uri("/v1/profiles/#{profile_id}/revoke")
-    |> HTTPoison.post("", [
-      {"Content-Type", "application/json"},
-      {"Authorization", "Bearer #{access_token}"}
-    ])
-    |> ExCronofy.handle_api_response()
+    ExCronofy.ApiClient.post(
+      "/v1/profiles/#{profile_id}/revoke",
+      %{},
+      [{"Authorization", "Bearer #{access_token}"}]
+    )
   end
 end

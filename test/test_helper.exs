@@ -1,3 +1,4 @@
 ExUnit.start()
-HTTPoison.start()
+
+ExCronofy.ApiClient.start()
 Faker.start()

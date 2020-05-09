@@ -170,4 +170,108 @@ defmodule ExCronofy.AuthTest do
       end
     end
   end
+
+  describe "revoke_authorization/1" do
+    test "returns ok and body on 200 success" do
+      token = Faker.String.base64()
+      uri = ExCronofy.fetch_api_uri("/oauth/token/revoke")
+
+      body =
+        Poison.encode!(%{
+          client_id: Application.get_env(:ex_cronofy, :client_id),
+          client_secret: Application.get_env(:ex_cronofy, :client_secret),
+          token: token
+        })
+
+      success_response = %{
+        status_code: 200,
+        body:
+          Poison.encode!(%{
+            data: Faker.String.base64()
+          })
+      }
+
+      with_mock HTTPoison,
+        post: fn ^uri, ^body, [{"Content-Type", "application/json"}] ->
+          {:ok, success_response}
+        end do
+        decoded_body = Poison.decode!(success_response.body)
+
+        assert {:ok, decoded_body} == ExCronofy.Auth.revoke_authorization(token)
+      end
+    end
+
+    test "returns error and message on 400 error" do
+      token = Faker.String.base64()
+      uri = ExCronofy.fetch_api_uri("/oauth/token/revoke")
+
+      body =
+        Poison.encode!(%{
+          client_id: Application.get_env(:ex_cronofy, :client_id),
+          client_secret: Application.get_env(:ex_cronofy, :client_secret),
+          token: token
+        })
+
+      error_msg = Faker.String.base64()
+
+      failure_response = %{
+        status_code: 400,
+        body:
+          Poison.encode!(%{
+            error: error_msg
+          })
+      }
+
+      with_mock HTTPoison,
+        post: fn ^uri, ^body, [{"Content-Type", "application/json"}] ->
+          {:ok, failure_response}
+        end do
+        assert {:error, %{"error" => error_msg}} ==
+                 ExCronofy.Auth.revoke_authorization(token)
+      end
+    end
+  end
+
+  describe "revoke_profile/2" do
+    test "returns ok and body on 200 success" do
+      profile_id = Faker.String.base64()
+      access_token = Faker.String.base64()
+      uri = ExCronofy.fetch_api_uri("/v1/profiles/#{profile_id}/revoke")
+
+      success_response = %{
+        status_code: 200,
+        body: Poison.encode!(%{})
+      }
+
+      headers = [
+        {"Content-Type", "application/json"},
+        {"Authorization", "Bearer #{access_token}"}
+      ]
+
+      with_mock HTTPoison, post: fn ^uri, "", ^headers -> {:ok, success_response} end do
+        decoded_body = Poison.decode!(success_response.body)
+        assert {:ok, decoded_body} == ExCronofy.Auth.revoke_profile(profile_id, access_token)
+      end
+    end
+
+    test "returns error and message on 400 error" do
+      profile_id = Faker.String.base64()
+      access_token = Faker.String.base64()
+      uri = ExCronofy.fetch_api_uri("/v1/profiles/#{profile_id}/revoke")
+
+      failure_response = %{
+        status_code: 401,
+        body: Poison.encode!(%{})
+      }
+
+      headers = [
+        {"Content-Type", "application/json"},
+        {"Authorization", "Bearer #{access_token}"}
+      ]
+
+      with_mock HTTPoison, post: fn ^uri, "", ^headers -> {:ok, failure_response} end do
+        assert {:error, %{}} == ExCronofy.Auth.revoke_profile(profile_id, access_token)
+      end
+    end
+  end
 end

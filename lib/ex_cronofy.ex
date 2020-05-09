@@ -84,9 +84,17 @@ defmodule ExCronofy do
 
   def handle_api_response({:ok, %{status_code: status_code, body: body}}) do
     if success_code?(status_code) do
-      {:ok, Poison.decode!(body)}
+      {:ok, body |> handle_body()}
     else
-      {:error, Poison.decode!(body)}
+      {:error, body |> handle_body()}
+    end
+  end
+
+  defp handle_body(body) do
+    if body == "" do
+      nil
+    else
+      Poison.decode!(body)
     end
   end
 

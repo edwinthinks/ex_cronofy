@@ -37,6 +37,14 @@ defmodule ExCronofy.Auth do
     ExCronofy.fetch_uri("/oauth/authorize", query_params)
   end
 
+  @doc """
+  Requests a access token from Cronofy and return the response body
+
+  ## Parameters
+
+    - code: a code retrieved from authorization
+    - redirect_uri: the corresponding redirect_uri associated with the `code`
+  """
   @spec request_access_token(String.t(), String.t()) :: tuple
   def request_access_token(code, redirect_uri) do
     ExCronofy.fetch_api_uri("/oauth/token")
@@ -53,6 +61,13 @@ defmodule ExCronofy.Auth do
     |> ExCronofy.handle_api_response()
   end
 
+  @doc """
+  Refreshes access token
+
+  ## Parameters
+
+    - refresh_token: refresh token
+  """
   @spec refresh_access_token(String.t()) :: tuple
   def refresh_access_token(refresh_token) do
     ExCronofy.fetch_api_uri("/oauth/token")
@@ -65,6 +80,45 @@ defmodule ExCronofy.Auth do
       }),
       [{"Content-Type", "application/json"}]
     )
+    |> ExCronofy.handle_api_response()
+  end
+
+  @doc """
+  Revokes authorization
+
+  ## Parameters
+
+    - token: the token to revoke. This can be an access token or refresh token
+  """
+  @spec revoke_authorization(String.t()) :: tuple
+  def revoke_authorization(token) do
+    ExCronofy.fetch_api_uri("/oauth/token/revoke")
+    |> HTTPoison.post(
+      Poison.encode!(%{
+        client_id: @client_id,
+        client_secret: @client_secret,
+        token: token
+      }),
+      [{"Content-Type", "application/json"}]
+    )
+    |> ExCronofy.handle_api_response()
+  end
+
+  @doc """
+  Revokes access to a profile
+
+  ## Parameters
+
+    - profile_id: the id of the profile to revoke access
+    - access_token: an authorization token
+  """
+  @spec revoke_profile(String.t(), String.t()) :: tuple
+  def revoke_profile(profile_id, access_token) do
+    ExCronofy.fetch_api_uri("/v1/profiles/#{profile_id}/revoke")
+    |> HTTPoison.post("", [
+      {"Content-Type", "application/json"},
+      {"Authorization", "Bearer #{access_token}"}
+    ])
     |> ExCronofy.handle_api_response()
   end
 end

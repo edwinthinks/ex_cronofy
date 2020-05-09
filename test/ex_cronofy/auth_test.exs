@@ -1,6 +1,5 @@
 defmodule ExCronofy.AuthTest do
   use ExUnit.Case
-  doctest ExCronofy.Auth
 
   import Mock
 

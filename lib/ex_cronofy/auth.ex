@@ -19,8 +19,8 @@ defmodule ExCronofy.Auth do
 
   ## Examples
 
-      iex> ExCronofy.Auth.request_authorization_url("/test", %{a: "test"})
-      "https://app.cronofy.com/oauth/authorize?a=test&client_id=fake_client_id&redirect_uri=fake_redirect_uri&response_type=code&scope=%2Ftest"
+      iex> ExCronofy.Auth.request_authorization_url("read_events", %{state: "wibble"})
+      "https://app.cronofy.com/oauth/authorize?client_id=fake_client_id&redirect_uri=fake_redirect_uri&response_type=code&scope=read_events&state=wibble"
 
   """
   @spec request_authorization_url(String.t(), map) :: String.t()
@@ -50,6 +50,11 @@ defmodule ExCronofy.Auth do
 
     - code: a code retrieved from authorization
     - redirect_uri: the corresponding redirect_uri associated with the `code`
+
+  ## Examples
+
+      iex> ExCronofy.Auth.request_access_token("random_code", "http://example.com")
+
   """
   @spec request_access_token(String.t(), String.t()) :: tuple
   def request_access_token(code, redirect_uri) do
@@ -68,6 +73,11 @@ defmodule ExCronofy.Auth do
   ## Parameters
 
     - refresh_token: refresh token
+
+  ## Examples
+
+      iex> ExCronofy.Auth.refresh_access_token("random_refresh_token")
+
   """
   @spec refresh_access_token(String.t()) :: tuple
   def refresh_access_token(refresh_token) do
@@ -85,6 +95,11 @@ defmodule ExCronofy.Auth do
   ## Parameters
 
     - token: the token to revoke. This can be an access token or refresh token
+
+  ## Examples
+
+      iex> ExCronofy.Auth.revoke_authorization("random_token")
+
   """
   @spec revoke_authorization(String.t()) :: tuple
   def revoke_authorization(token) do
@@ -102,6 +117,11 @@ defmodule ExCronofy.Auth do
 
     - profile_id: the id of the profile to revoke access
     - access_token: an authorization token
+
+  ## Examples
+
+      iex> ExCronofy.Auth.revoke_profile("random_profile_id", "random_access_token")
+
   """
   @spec revoke_profile(String.t(), String.t()) :: tuple
   def revoke_profile(profile_id, access_token) do

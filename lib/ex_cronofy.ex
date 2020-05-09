@@ -49,6 +49,24 @@ defmodule ExCronofy do
     |> URI.merge(%URI{query: sanitized_query_params})
   end
 
+  @doc """
+  Returns proper response from a cronofy HTTP request
+
+  ## Examples
+
+      iex> ExCronofy.handle_response({:error, %{reason: "test"}})
+      {:error, "test"}
+
+      iex> data = Poison.encode!(%{data: "ok"})
+      iex> ExCronofy.handle_response({:ok, %{status_code: 200, body: data}})
+      {:ok, %{"data" => "ok"}}
+
+      iex> data = Poison.encode!(%{message: "ok"})
+      iex> ExCronofy.handle_response({:ok, %{status_code: 400, body: data}})
+      {:error, %{"message" => "ok"}}
+
+
+  """
   def handle_response({:error, %{reason: reason}}), do: {:error, reason}
 
   def handle_response({:ok, %{status_code: status_code, body: body}}) do

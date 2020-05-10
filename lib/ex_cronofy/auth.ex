@@ -4,10 +4,6 @@ defmodule ExCronofy.Auth do
   Cronofy services
   """
 
-  @redirect_uri Application.get_env(:ex_cronofy, :redirect_uri)
-  @client_id Application.get_env(:ex_cronofy, :client_id)
-  @client_secret Application.get_env(:ex_cronofy, :client_secret)
-
   @doc """
   Returns a generated request authorization url
 
@@ -27,9 +23,9 @@ defmodule ExCronofy.Auth do
   def request_authorization_url(scope, options \\ %{}) do
     query_params = %{
       response_type: "code",
-      redirect_uri: @redirect_uri,
       scope: scope,
-      client_id: @client_id
+      client_id: Application.get_env(:ex_cronofy, :client_id),
+      redirect_uri: Application.get_env(:ex_cronofy, :redirect_uri)
     }
 
     sanitized_query_params =
@@ -59,8 +55,8 @@ defmodule ExCronofy.Auth do
   @spec request_access_token(String.t(), String.t()) :: tuple
   def request_access_token(code, redirect_uri) do
     ExCronofy.ApiClient.post("/oauth/token", %{
-      client_id: @client_id,
-      client_secret: @client_secret,
+      client_id: Application.get_env(:ex_cronofy, :client_id),
+      client_secret: Application.get_env(:ex_cronofy, :client_secret),
       grant_type: "authorization_code",
       code: code,
       redirect_uri: redirect_uri
@@ -82,8 +78,8 @@ defmodule ExCronofy.Auth do
   @spec refresh_access_token(String.t()) :: tuple
   def refresh_access_token(refresh_token) do
     ExCronofy.ApiClient.post("/oauth/token", %{
-      client_id: @client_id,
-      client_secret: @client_secret,
+      client_id: Application.get_env(:ex_cronofy, :client_id),
+      client_secret: Application.get_env(:ex_cronofy, :client_secret),
       grant_type: "refresh_token",
       refresh_token: refresh_token
     })
@@ -104,8 +100,8 @@ defmodule ExCronofy.Auth do
   @spec revoke_authorization(String.t()) :: tuple
   def revoke_authorization(token) do
     ExCronofy.ApiClient.post("/oauth/token/revoke", %{
-      client_id: @client_id,
-      client_secret: @client_secret,
+      client_id: Application.get_env(:ex_cronofy, :client_id),
+      client_secret: Application.get_env(:ex_cronofy, :client_secret),
       token: token
     })
   end

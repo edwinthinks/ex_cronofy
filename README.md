@@ -1,6 +1,7 @@
 # ExCronofy
 ![Semaphore Build Badge](https://edwinthinks.semaphoreci.com/badges/ex_cronofy.svg?stlye=shield "Semaphore Badge")
-
+[![Maintainability](https://api.codeclimate.com/v1/badges/c8e307373658cdc79990/maintainability)](https://codeclimate.com/github/edwinthinks/ex_cronofy/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/c8e307373658cdc79990/test_coverage)](https://codeclimate.com/github/edwinthinks/ex_cronofy/test_coverage)
 
 A elixir API client library to utilize [Cronofy](https://www.cronofy.com/) services to manage your calendar events.
 

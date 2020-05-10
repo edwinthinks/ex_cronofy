@@ -3,6 +3,8 @@ defmodule ExCronofy.AuthTest do
 
   import Mock
 
+  alias ExCronofy.{ApiClient, Auth}
+
   describe "request_authorization_url/2" do
     test "returns authorization uri with correct query params" do
       required_query_params = %{
@@ -17,7 +19,7 @@ defmodule ExCronofy.AuthTest do
       }
 
       resultant_uri =
-        ExCronofy.Auth.request_authorization_url(
+        Auth.request_authorization_url(
           required_query_params.scope,
           optional_params
         )
@@ -54,8 +56,8 @@ defmodule ExCronofy.AuthTest do
 
       fake_response = Faker.String.base64()
 
-      with_mock ExCronofy.ApiClient, post: fn ^path, ^request_body -> {:ok, fake_response} end do
-        assert {:ok, fake_response} == ExCronofy.Auth.request_access_token(code, redirect_uri)
+      with_mock ApiClient, post: fn ^path, ^request_body -> {:ok, fake_response} end do
+        assert {:ok, fake_response} == Auth.request_access_token(code, redirect_uri)
       end
     end
   end
@@ -75,8 +77,8 @@ defmodule ExCronofy.AuthTest do
 
       fake_response = Faker.String.base64()
 
-      with_mock ExCronofy.ApiClient, post: fn ^path, ^request_body -> {:ok, fake_response} end do
-        assert {:ok, fake_response} == ExCronofy.Auth.refresh_access_token(refresh_token)
+      with_mock ApiClient, post: fn ^path, ^request_body -> {:ok, fake_response} end do
+        assert {:ok, fake_response} == Auth.refresh_access_token(refresh_token)
       end
     end
   end
@@ -95,8 +97,8 @@ defmodule ExCronofy.AuthTest do
 
       fake_response = Faker.String.base64()
 
-      with_mock ExCronofy.ApiClient, post: fn ^path, ^request_body -> {:ok, fake_response} end do
-        assert {:ok, fake_response} == ExCronofy.Auth.revoke_authorization(token)
+      with_mock ApiClient, post: fn ^path, ^request_body -> {:ok, fake_response} end do
+        assert {:ok, fake_response} == Auth.revoke_authorization(token)
       end
     end
   end
@@ -113,9 +115,9 @@ defmodule ExCronofy.AuthTest do
 
       headers = [{"Authorization", "Bearer #{access_token}"}]
 
-      with_mock ExCronofy.ApiClient,
+      with_mock ApiClient,
         post: fn ^path, ^request_body, ^headers -> {:ok, fake_response} end do
-        assert {:ok, fake_response} == ExCronofy.Auth.revoke_profile(profile_id, access_token)
+        assert {:ok, fake_response} == Auth.revoke_profile(profile_id, access_token)
       end
     end
   end

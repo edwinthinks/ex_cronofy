@@ -4,6 +4,8 @@ defmodule ExCronofy.Auth do
   Cronofy services
   """
 
+  alias ExCronofy.ApiClient
+
   @doc """
   Returns a generated request authorization url
 
@@ -77,7 +79,7 @@ defmodule ExCronofy.Auth do
   """
   @spec refresh_access_token(String.t()) :: tuple
   def refresh_access_token(refresh_token) do
-    ExCronofy.ApiClient.post("/oauth/token", %{
+    ApiClient.post("/oauth/token", %{
       client_id: Application.get_env(:ex_cronofy, :client_id),
       client_secret: Application.get_env(:ex_cronofy, :client_secret),
       grant_type: "refresh_token",
@@ -99,7 +101,7 @@ defmodule ExCronofy.Auth do
   """
   @spec revoke_authorization(String.t()) :: tuple
   def revoke_authorization(token) do
-    ExCronofy.ApiClient.post("/oauth/token/revoke", %{
+    ApiClient.post("/oauth/token/revoke", %{
       client_id: Application.get_env(:ex_cronofy, :client_id),
       client_secret: Application.get_env(:ex_cronofy, :client_secret),
       token: token
@@ -121,7 +123,7 @@ defmodule ExCronofy.Auth do
   """
   @spec revoke_profile(String.t(), String.t()) :: tuple
   def revoke_profile(profile_id, access_token) do
-    ExCronofy.ApiClient.post(
+    ApiClient.post(
       "/v1/profiles/#{profile_id}/revoke",
       %{},
       [{"Authorization", "Bearer #{access_token}"}]

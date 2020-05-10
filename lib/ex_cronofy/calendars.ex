@@ -3,6 +3,8 @@ defmodule ExCronofy.Calendars do
   Provides functions to interact with Cronofy's calendar API
   """
 
+  alias ExCronofy.ApiClient
+
   @doc """
   Sends a request to get a list the calendars for a authenticated user
 
@@ -16,7 +18,7 @@ defmodule ExCronofy.Calendars do
   """
   @spec list_calendars(String.t()) :: tuple
   def list_calendars(access_token) do
-    ExCronofy.ApiClient.get("/v1/calendars", [{"Authorization", "Bearer #{access_token}"}])
+    ApiClient.get("/v1/calendars", [{"Authorization", "Bearer #{access_token}"}])
   end
 
   @doc """
@@ -33,7 +35,7 @@ defmodule ExCronofy.Calendars do
   """
   @spec create_calendar(map, String.t()) :: tuple
   def create_calendar(calendar_attrs, access_token) do
-    ExCronofy.ApiClient.post("/v1/calendars", calendar_attrs, [
+    ApiClient.post("/v1/calendars", calendar_attrs, [
       {"Authorization", "Bearer #{access_token}"}
     ])
   end
@@ -57,6 +59,6 @@ defmodule ExCronofy.Calendars do
       application_calendar_id: application_calendar_id
     }
 
-    ExCronofy.ApiClient.post("/v1/application_calendars", request_body)
+    ApiClient.post("/v1/application_calendars", request_body)
   end
 end

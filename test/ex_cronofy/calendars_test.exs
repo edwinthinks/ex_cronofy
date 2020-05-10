@@ -3,6 +3,8 @@ defmodule ExCronofy.CalendarsTest do
 
   import Mock
 
+  alias ExCronofy.{ApiClient, Calendars}
+
   describe "list_calendars/1" do
     test "sends API request to properly and returns ok with response" do
       access_token = Faker.String.base64()
@@ -12,8 +14,8 @@ defmodule ExCronofy.CalendarsTest do
       fake_response = Faker.String.base64()
       headers = [{"Authorization", "Bearer #{access_token}"}]
 
-      with_mock ExCronofy.ApiClient, get: fn ^path, ^headers -> {:ok, fake_response} end do
-        assert {:ok, fake_response} == ExCronofy.Calendars.list_calendars(access_token)
+      with_mock ApiClient, get: fn ^path, ^headers -> {:ok, fake_response} end do
+        assert {:ok, fake_response} == Calendars.list_calendars(access_token)
       end
     end
   end
@@ -32,10 +34,10 @@ defmodule ExCronofy.CalendarsTest do
       fake_response = Faker.String.base64()
       headers = [{"Authorization", "Bearer #{access_token}"}]
 
-      with_mock ExCronofy.ApiClient,
+      with_mock ApiClient,
         post: fn ^path, ^calendar_attrs, ^headers -> {:ok, fake_response} end do
         assert {:ok, fake_response} ==
-                 ExCronofy.Calendars.create_calendar(calendar_attrs, access_token)
+                 Calendars.create_calendar(calendar_attrs, access_token)
       end
     end
   end
@@ -54,9 +56,9 @@ defmodule ExCronofy.CalendarsTest do
 
       fake_response = Faker.String.base64()
 
-      with_mock ExCronofy.ApiClient, post: fn ^path, ^request_body -> {:ok, fake_response} end do
+      with_mock ApiClient, post: fn ^path, ^request_body -> {:ok, fake_response} end do
         assert {:ok, fake_response} ==
-                 ExCronofy.Calendars.create_application_calendar(application_calendar_id)
+                 Calendars.create_application_calendar(application_calendar_id)
       end
     end
   end

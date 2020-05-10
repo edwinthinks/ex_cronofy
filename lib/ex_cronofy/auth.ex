@@ -1,7 +1,6 @@
 defmodule ExCronofy.Auth do
   @moduledoc """
-  Provides functions to handle authorization and authentication of
-  Cronofy services
+  Collection of functions for authentication and authorization with Cronofy's service
   """
 
   alias ExCronofy.ApiClient

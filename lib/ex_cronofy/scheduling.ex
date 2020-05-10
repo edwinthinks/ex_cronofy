@@ -1,12 +1,12 @@
 defmodule ExCronofy.Scheduling do
   @moduledoc """
-  Provides functions to interact with Cronofy's scheduling API
+  Collection of functions used to interact with Cronofy's scheduling API
   """
 
   alias ExCronofy.ApiClient
 
   @doc """
-  Sends a request to get a list the calendars for a authenticated user
+  Gets the availablity for a authenticated user
 
   ## Parameters
 

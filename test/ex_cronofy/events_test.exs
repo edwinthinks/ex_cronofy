@@ -37,16 +37,6 @@ defmodule ExCronofy.EventsTest do
   end
 
   describe "create_or_update_event/2" do
-    # test "raises FunctionClauseError when tzid is not provided in query_params" do
-    # access_token = Faker.String.base64()
-
-    # invalid_query_params = %{}
-
-    # assert_raise FunctionClauseError, fn ->
-    # Events.read_events(invalid_query_params, access_token)
-    # end
-    # end
-
     test "sends API request to properly with query params and returns ok with response" do
       access_token = Faker.String.base64()
       calendar_id = Faker.String.base64()
@@ -68,6 +58,28 @@ defmodule ExCronofy.EventsTest do
       with_mock ApiClient, post: fn ^path, ^event_attrs, ^headers -> {:ok, fake_response} end do
         assert {:ok, fake_response} ==
                  Events.create_or_update_event(calendar_id, event_attrs, access_token)
+      end
+    end
+  end
+
+  describe "delete_event/2" do
+    test "sends API request to properly with query params and returns ok with response" do
+      access_token = Faker.String.base64()
+      calendar_id = Faker.String.base64()
+      event_id = Faker.String.base64()
+
+      request_body = %{
+        event_id: event_id
+      }
+
+      path = "/v1/calendars/#{calendar_id}/events"
+
+      fake_response = Faker.String.base64()
+      headers = [{"Authorization", "Bearer #{access_token}"}]
+
+      with_mock ApiClient,
+        request: fn :delete, ^path, ^request_body, ^headers -> {:ok, fake_response} end do
+        assert {:ok, fake_response} == Events.delete_event(calendar_id, event_id, access_token)
       end
     end
   end

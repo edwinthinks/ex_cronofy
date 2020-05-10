@@ -1,12 +1,12 @@
 defmodule ExCronofy.Calendars do
   @moduledoc """
-  Provides functions to interact with Cronofy's calendar API
+  Collection of functions used to interact with Cronofy's calendars API
   """
 
   alias ExCronofy.ApiClient
 
   @doc """
-  Sends a request to get a list the calendars for a authenticated user
+  Gets a list of calendars for an authenticated user
 
   ## Parameters
 
@@ -15,6 +15,7 @@ defmodule ExCronofy.Calendars do
   ## Examples
 
       iex> ExCronofy.Calendars.list_calendars("random_access_token")
+
   """
   @spec list_calendars(String.t()) :: tuple
   def list_calendars(access_token) do
@@ -22,7 +23,7 @@ defmodule ExCronofy.Calendars do
   end
 
   @doc """
-  Sends a request to create a calendar for a authenticated user
+  Creates a calendar for an authenticated user
 
   ## Parameters
 
@@ -32,6 +33,7 @@ defmodule ExCronofy.Calendars do
   ## Examples
 
       iex> ExCronofy.Calendars.create_calendar(%{profile_id: "wibble", name: "wobble"}, "random_access_token")
+
   """
   @spec create_calendar(map, String.t()) :: tuple
   def create_calendar(calendar_attrs, access_token) do
@@ -41,7 +43,7 @@ defmodule ExCronofy.Calendars do
   end
 
   @doc """
-  Sends a request to provision a Cronofy hosted calendar for your application
+  Provisions a calendar hosted by Cronofy for your application
 
   ## Parameters
 
@@ -50,6 +52,7 @@ defmodule ExCronofy.Calendars do
   ## Examples
 
       iex> ExCronofy.Calendars.create_application_calendar("wibble")
+
   """
   @spec create_application_calendar(String.t()) :: tuple
   def create_application_calendar(application_calendar_id) do

@@ -1,6 +1,6 @@
 defmodule ExCronofy.Events do
   @moduledoc """
-  Provides functions to interact with Cronofy's events API
+  Collection of functions used to interact with Cronofy's events API
   """
 
   alias ExCronofy.ApiClient
@@ -60,5 +60,33 @@ defmodule ExCronofy.Events do
     ApiClient.post(path, event_attrs, [
       {"Authorization", "Bearer #{access_token}"}
     ])
+  end
+
+  @doc """
+  Deletes an event on a calendar
+
+  ## Parameters
+
+    - calendar_id: an id of the calendar
+    - event_id: an id of an event
+    - access_token: a access token
+
+  ## Examples
+
+      iex> ExCronofy.Events.delete_event("random_calendar_id", "random_event_id", "random_access_token")
+
+  """
+  @spec delete_event(String.t(), String.t(), String.t()) :: tuple
+  def delete_event(calendar_id, event_id, access_token) do
+    path = "/v1/calendars/#{calendar_id}/events"
+
+    # HTTPoison does not support `DELETE` with a body as required by the API spec. Hence,
+    # using `request` instead of `delete` here.
+    ApiClient.request(
+      :delete,
+      path,
+      %{event_id: event_id},
+      [{"Authorization", "Bearer #{access_token}"}]
+    )
   end
 end

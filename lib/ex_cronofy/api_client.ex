@@ -9,11 +9,14 @@ defmodule ExCronofy.ApiClient do
     "https://api.cronofy.com" <> url
   end
 
+  
   def process_response_body(body) when is_binary(body) do
-    body |> Poison.decode!()
+    if body == "" do
+      %{}
+    else
+      body |> Poison.decode!()
+    end
   end
-
-  def process_response_body(body) when body == "", do: %{}
 
   def process_request_body(""), do: ""
 

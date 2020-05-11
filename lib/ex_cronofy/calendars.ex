@@ -32,7 +32,8 @@ defmodule ExCronofy.Calendars do
 
   ## Examples
 
-      iex> ExCronofy.Calendars.create_calendar(%{profile_id: "wibble", name: "wobble"}, "random_access_token")
+      iex> calendar_attr = %{ profile_id: "pro_n23kjnwrw2", name: "Calendar Test 50", color: "#49BED8" }
+      iex> ExCronofy.Calendars.create_calendar(calendar_attr, "random_access_token")
 
   """
   @spec create_calendar(map, String.t()) :: tuple

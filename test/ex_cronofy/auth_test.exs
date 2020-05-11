@@ -42,8 +42,6 @@ defmodule ExCronofy.AuthTest do
   describe "request_access_token/2" do
     test "sends API request to properly and returns ok with response" do
       code = Faker.String.base64()
-      redirect_uri = Faker.Internet.url()
-
       path = "/oauth/token"
 
       request_body = %{
@@ -51,13 +49,13 @@ defmodule ExCronofy.AuthTest do
         client_secret: Application.get_env(:ex_cronofy, :client_secret),
         grant_type: "authorization_code",
         code: code,
-        redirect_uri: redirect_uri
+        redirect_uri: Application.get_env(:ex_cronofy, :redirect_uri),
       }
 
       fake_response = Faker.String.base64()
 
       with_mock ApiClient, post: fn ^path, ^request_body -> {:ok, fake_response} end do
-        assert {:ok, fake_response} == Auth.request_access_token(code, redirect_uri)
+        assert {:ok, fake_response} == Auth.request_access_token(code)
       end
     end
   end

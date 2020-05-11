@@ -16,7 +16,7 @@ defmodule ExCronofy.Auth do
 
   ## Examples
 
-      iex> ExCronofy.Auth.request_authorization_url("read_events", %{state: "wibble"})
+      iex> ExCronofy.Auth.request_authorization_url("read_write", %{state: "wibble"})
       "https://app.cronofy.com/oauth/authorize?client_id=fake_client_id&redirect_uri=fake_redirect_uri&response_type=code&scope=read_events&state=wibble"
 
   """
@@ -50,17 +50,17 @@ defmodule ExCronofy.Auth do
 
   ## Examples
 
-      iex> ExCronofy.Auth.request_access_token("random_code", "http://example.com")
+      iex> ExCronofy.Auth.request_access_token("random_code")
 
   """
-  @spec request_access_token(String.t(), String.t()) :: tuple
-  def request_access_token(code, redirect_uri) do
+  @spec request_access_token(String.t()) :: tuple
+  def request_access_token(code) do
     ExCronofy.ApiClient.post("/oauth/token", %{
       client_id: Application.get_env(:ex_cronofy, :client_id),
       client_secret: Application.get_env(:ex_cronofy, :client_secret),
+      redirect_uri: Application.get_env(:ex_cronofy, :redirect_uri),
       grant_type: "authorization_code",
       code: code,
-      redirect_uri: redirect_uri
     })
   end
 

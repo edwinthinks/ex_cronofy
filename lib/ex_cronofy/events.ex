@@ -39,7 +39,7 @@ defmodule ExCronofy.Events do
 
   ## Examples
       
-      iex> calendar_id = "wibble"
+      iex> calendar_id = "cal_W750QarHdBz1BJA-_m7EcwHcPtiqpWvPzezu-zA"
       iex> event_attrs = %{
         description: "Discuss plans for the next quarter.",
         end: "2020-05-12T17:00:00Z",

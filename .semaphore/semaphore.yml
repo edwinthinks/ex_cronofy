@@ -20,6 +20,9 @@ blocks:
             - MIX_ENV=test mix compile
             - cache store
             - cache store dialyzer-plt priv/plts/
+      env_vars:
+        - name: MIX_ENV
+          value: test
   - name: Analyze code
     task:
       prologue:
@@ -39,6 +42,9 @@ blocks:
         - name: formatter
           commands:
             - mix format --check-formatted
+      env_vars:
+        - name: MIX_ENV
+          value: test
   - name: Run tests
     task:
       prologue:
@@ -54,3 +60,6 @@ blocks:
             - mix coveralls.semaphore
       secrets:
         - name: coverall-ex-cronofy
+      env_vars:
+        - name: MIX_ENV
+          value: test

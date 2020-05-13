@@ -6,6 +6,8 @@ defmodule ExCronofy.MixProject do
       app: :ex_cronofy,
       version: "0.1.0",
       elixir: "~> 1.10",
+      description: description(),
+      package: package(),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
@@ -14,7 +16,8 @@ defmodule ExCronofy.MixProject do
         "coveralls.detail": :test,
         "coveralls.post": :test,
         "coveralls.html": :test
-      ]
+      ],
+      source_url: "https://github.com/edwinthinks/ex_cronofy/"
     ]
   end
 
@@ -36,6 +39,18 @@ defmodule ExCronofy.MixProject do
       {:mock, "~> 0.3.0", only: :test},
       {:faker, "~> 0.13", only: :test},
       {:excoveralls, "~> 0.10", only: :test}
+    ]
+  end
+
+  defp description() do
+    "A elixir API client library to utilize Cronofy services to manage calendar events! With this library you can programmatically read and create calendar events."
+  end
+
+  defp package() do
+    [
+      name: "ex_cronofy",
+      licenses: ["Apache-2.0"],
+      links: %{"GitHub" => "https://github.com/edwinthinks/ex_cronofy/"}
     ]
   end
 end

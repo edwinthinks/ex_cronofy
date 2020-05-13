@@ -1,5 +1,6 @@
 # ExCronofy
 [![Hex version badge](https://img.shields.io/hexpm/v/ex_cronofy.svg)](https://hex.pm/packages/repo_example)
+[![Hex documentation badge](https://img.shields.io/badge/hexdoc-released-blue)](https://hexdocs.pm/ex_cronofy/api-reference.html)
 ![Semaphore Build Badge](https://edwinthinks.semaphoreci.com/badges/ex_cronofy.svg?stlye=shield "Semaphore Badge")
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/0dbbcc3d9fba46f0b5c1ca40211cd03f)](https://www.codacy.com/manual/edwinthinks/ex_cronofy?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=edwinthinks/ex_cronofy&amp;utm_campaign=Badge_Grade)
 [![Coverage Status](https://coveralls.io/repos/github/edwinthinks/ex_cronofy/badge.svg?branch=master)](https://coveralls.io/github/edwinthinks/ex_cronofy?branch=master)

@@ -60,7 +60,7 @@ defmodule ExCronofy.Auth do
       client_secret: Application.get_env(:ex_cronofy, :client_secret),
       redirect_uri: Application.get_env(:ex_cronofy, :redirect_uri),
       grant_type: "authorization_code",
-      code: code,
+      code: code
     })
   end
 

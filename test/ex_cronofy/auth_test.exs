@@ -49,7 +49,7 @@ defmodule ExCronofy.AuthTest do
         client_secret: Application.get_env(:ex_cronofy, :client_secret),
         grant_type: "authorization_code",
         code: code,
-        redirect_uri: Application.get_env(:ex_cronofy, :redirect_uri),
+        redirect_uri: Application.get_env(:ex_cronofy, :redirect_uri)
       }
 
       fake_response = Faker.String.base64()

@@ -9,7 +9,6 @@ defmodule ExCronofy.ApiClient do
     "https://api.cronofy.com" <> url
   end
 
-  
   def process_response_body(body) when is_binary(body) do
     if body == "" do
       %{}

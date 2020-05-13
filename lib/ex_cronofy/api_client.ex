@@ -13,7 +13,9 @@ defmodule ExCronofy.ApiClient do
     if body == "" do
       %{}
     else
-      body |> Poison.decode!()
+      {:ok, parsed_body} = body |> Poison.Parser.parse()
+
+      parsed_body
     end
   end
 
